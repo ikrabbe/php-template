@@ -43,3 +43,52 @@ done
 ls -l log
 cat log/error.log
 cat log/access.log
+
+
+## Install somewhere else (with 'sudo su web' to create the paths as web)
+# in the repository path, as user who owns the repository
+git config install.path /home/web/template/php2
+git config install.vhost php2-template.eoa.de
+git config install.vhostfile php2-template.conf
+
+# test it
+git config --get-regexp install..*
+
+# as sudo, but inside of the repository path
+sudo -s
+su web -c 'mkdir -p `git config --get install.path`'
+for x in `git live grep -l '\/home\/web\/template\/php'`
+do (
+	P="`git config --get install.path`"
+	cd "$P"
+	ed ${x} <<-EOF
+	g,/home/web/template/php,s,,$P,g
+	wq
+	EOF
+) done
+for x in setup.sh guide
+do (
+	P="`git config --get install.path`"
+	Y="`git config --get install.vhostfile`"
+	cd "$P"
+	ed ${x} <<-EOF
+	g,sites-enabled/php-template.conf,s,,$Y,g
+	wq
+	EOF
+) done
+for x in conf/php-nginx.conf conf/php-vhost.conf
+do (
+	P="`git config --get install.path`"
+	Z="`git config --get install.vhost`"
+	cd "$P"
+	ed ${x} <<-EOF
+	g,php-template.eoa.de;,s,,$Z,g
+	wq
+	EOF
+) done
+
+exit 	# the sudo shell
+X="`git config --get install.history`"
+X="$X\
+$(echo -n "installed in '`git config --get install.path`' with vhost \"`git config --get install.vhost`\" to vhostfile \"`git config --get install.vhostfile`\" @`date`")"
+git config install.history "$X"
