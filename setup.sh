@@ -8,7 +8,26 @@ D=/home/web/template/php
 cd $D
 cmd=${1:-setup-directories}
 
-if [ "$cmd" = "setup-directories" ]
+if [ "$cmd" = "help" ]
+then
+	cat 1>&2 <<EOF
+usage $0 [COMMAND]
+where default [COMMAND] is 'help' or one
+	setup-directories	# setup the run and log directories and modify the
+				# access rights
+	fpm			# start php-fpm
+	fpmstop			# stop php-fpm
+	fpmrestart		# start-stop round trip
+	activate		# activate apache2 and nginx vhosts
+	deactivate		# deactivate apache2 and nginx vhosts
+	apache-reload		# reload the apache2 web server
+	nginx-reload		# reload the nginx web server
+	apache-service-log	# if something goes wrong check the startup log of
+	nginx-service-log	# apache2 or nginx
+	clean-logs		# drop log file contents
+EOF
+
+elif [ "$cmd" = "setup-directories" ]
 then
 	mkdir log run
 	touch log/fpm-access.log log/php.log log/access.log log/error.log
@@ -19,6 +38,7 @@ then
 	chown web.web .
 	chmod 755 .
 	chmod 755 htdocs
+	chown web.web -R htdocs
 	chown root.www-data run
 	chmod 750 run
 elif [ "$cmd" = "fpm" ]
@@ -55,10 +75,10 @@ then
 	systemctl -l status apache2.service
 elif [ "$cmd" = "nginx-service-log" ]
 then
-	systemctl -l status apache2.service
+	systemctl -l status nginx.service
 elif [ "$cmd" = "clean-logs" ]
 then
-	for x in access error fpm-access php
+	for x in access error fpm-access php 
 	do echo -n "" > log/"$x".log
 	done
 fi
