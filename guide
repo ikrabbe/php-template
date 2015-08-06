@@ -1,0 +1,45 @@
+# AS Super User:
+cd /home/web/template/php
+
+touch log/fpm-access.log log/php.log log/access.log log/error.log
+chown web.root log/fpm-access.log log/php.log
+chown root.root log/access.log log/error.log
+chmod 660 log/fpm-access.log log/php.log log/access.log log/error.log
+
+chown web.web .
+chmod 755 .
+chmod 755 htdocs
+mkdir run
+chown root.www-data run
+chmod 750 run
+
+# FPM START
+D=/home/web/template/php
+# args="${*:-}"	# to get information use --info, --modules or --version
+			# test with -t or -tt and --nodaemonize and --force-stderr
+php5-fpm --php-ini "$D/conf/php.ini" --fpm-config "$D/conf/php-fpm.conf" --pid "$D/run/php-fpm.pid"; chown www-data.www-data run/fpm.sock
+chmod 660 run/fpm.sock
+
+kill `cat run/php-fpm.pid`; rm run/fpm.sock
+
+
+
+# activate
+ln -s /home/web/template/php/conf/php-vhost.conf /etc/apache2/sites-enabled/php-template.conf
+ln -s /home/web/template/php/conf/php-nginx.conf /etc/nginx/sites-enabled/php-template.conf
+# deactivate
+rm /etc/apache2/sites-enabled/php-template.conf
+rm /etc/nginx/sites-enabled/php-template.conf
+
+service apache2 reload
+systemctl -l status apache2.service
+
+
+
+## CLEAN LOGS
+for x in access error fpm-access php 
+do echo -n "" > log/"$x".log
+done
+ls -l log
+cat log/error.log
+cat log/access.log
