@@ -58,7 +58,7 @@ then
 	systemctl -l status apache2.service
 elif [ "$cmd" = "clean-logs" ]
 then
-	for x in access error fpm-access php 
+	for x in access error fpm-access php
 	do echo -n "" > log/"$x".log
 	done
 fi
