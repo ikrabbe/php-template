@@ -4,8 +4,7 @@ then echo "please execute as super-user: sudo $0 $*" 1>&2
 exit 1
 fi
 
-D=/home/web/template/php
-cd $D
+cd /home/web/template/php
 cmd=${1:-help}
 
 if [ "$cmd" = "help" ]
@@ -31,7 +30,7 @@ EOF
 
 elif [ "$cmd" = "setup-directories" ]
 then
-	mkdir log run
+	mkdir -p log run
 	touch log/fpm-access.log log/php.log log/access.log log/error.log
 	chown web.root log/fpm-access.log log/php.log
 	chown root.root log/access.log log/error.log
@@ -43,12 +42,15 @@ then
 	chown web.web -R htdocs
 	chown root.www-data run
 	chmod 750 run
+	chown root.root conf
+	chmod 750 conf
+	chmod 640 conf/*
 elif [ "$cmd" = "fpm" ]
 then
 	shift
 	args="${*:-}"	# to get information use --info, --modules or --version
 				# test with -t or -tt and --nodaemonize and --force-stderr
-	php5-fpm --php-ini "$D/conf/php.ini" --fpm-config "$D/conf/php-fpm.conf" --pid "$D/run/php-fpm.pid" $args
+	php5-fpm --php-ini "conf/php.ini" --fpm-config "conf/php-fpm.conf" --pid "run/php-fpm.pid" $args
 	chown www-data.www-data run/fpm.sock
 	chmod 660 run/fpm.sock
 elif [ "$cmd" = "fpmstop" ]
