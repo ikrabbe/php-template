@@ -6,7 +6,7 @@ fi
 
 D=/home/web/template/php
 cd $D
-cmd=${1:-setup-directories}
+cmd=${1:-help}
 
 if [ "$cmd" = "help" ]
 then
@@ -22,6 +22,8 @@ where default [COMMAND] is 'help' or one
 	deactivate		# deactivate apache2 and nginx vhosts
 	apache-reload		# reload the apache2 web server
 	nginx-reload		# reload the nginx web server
+	apache-restart		# reload the apache2 web server
+	nginx-restart		# reload the nginx web server
 	apache-service-log	# if something goes wrong check the startup log of
 	nginx-service-log	# apache2 or nginx
 	clean-logs		# drop log file contents
@@ -70,6 +72,12 @@ then
 elif [ "$cmd" = "nginx-reload" ]
 then
 	service nginx reload
+elif [ "$cmd" = "apache-restart" ]
+then
+	service apache2 restart
+elif [ "$cmd" = "nginx-restart" ]
+then
+	service nginx restart
 elif [ "$cmd" = "apache-service-log" ]
 then
 	systemctl -l status apache2.service
@@ -81,4 +89,8 @@ then
 	for x in access error fpm-access php 
 	do echo -n "" > log/"$x".log
 	done
+else
+	echo "ERROR: I don't understand your command line $0 $*" 1>&2
+	echo 1>&2
+	$0 help
 fi
