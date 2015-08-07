@@ -30,4 +30,4 @@ The `vhostfile` is something that will be linked into `/etc/apache2/sites-enable
 # TODO
 
 1. Add the install rules from the guide file to setup.sh.
-
+2. Describe the installation process in detail.
