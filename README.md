@@ -25,7 +25,7 @@ The __install.path__ is used to install a webroot. To allow automagic installati
 	git config install.vhost 'YOUR.VHOST-NAME-FOR-THIS.WEB'
 	git config install.vhostfile 'HOW_THE_VHOST_INCLUDE_FILE_IS_NAMED'
 
-The `vhostfile` is something that will be linked into `/etc/apache2/sites-enabled' and/or '/etc/nginx/sites-enabled'. If your system uses other — __more sane__ — directory structures for the web services, you have to change the rules in `guide` and `setup.sh` to match your system.
+The `vhostfile` is something that will be linked into `/etc/apache2/sites-enabled` and/or `/etc/nginx/sites-enabled`. If your system uses other — __more sane__ — directory structures for the web services, you have to change the rules in `guide` and `setup.sh` to match your system.
 
 # TODO
 
